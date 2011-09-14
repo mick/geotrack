@@ -14,16 +14,17 @@ var db = connection.database(settings.COUCHDB_DATABASE);
 app.use(express.bodyParser());
 
 socket = io.listen(app);
-
+var subs = [];
 socket.on('connection', function(client){ 
         sys.puts("new client connect");
 
-        client.on('message', function(msg){ 
-            // no client messages yet.
+    subs.push(client);
+    client.on('message', function(msg){ 
+        // no client messages yet.
 
-            }); 
-        client.on('disconnect', function(){ sys.puts("client disconnect"); }) 
     }); 
+    client.on('disconnect', function(){ sys.puts("client disconnect"); }) ;
+}); 
 
 app.get('/', function(req, res){                
         res.render('index.ejs', { layout: false});
@@ -38,7 +39,7 @@ app.put('/api/location', function(req, res){
 
     //var lat = req.body['lat'];
     //var lng = req.body['lng'];
-
+    console.log("new location posted");
     var newlocation = {date:(new Date()),
                        geom: {"type":"Point", "coordinates":[lng, lat]}};
 
@@ -50,7 +51,9 @@ app.put('/api/location', function(req, res){
             res.send({status:"ok"});
         }
     });
-    socket.emit('newlocation', newlocation.geom);
+    for( s in subs){
+        subs[s].emit('newlocation', newlocation.geom);
+    }    
 
 });
 
