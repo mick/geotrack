@@ -1,10 +1,9 @@
 var socket = new io.Socket();
 var map = null;
 var marker = null;
-var locations = [];
 socket.connect();
 socket.on('connect', function(){ console.log("connect"); });
-socket.on('newlocation', function(data){ 
+socket.on('message', function(data){ 
     geotrack.newlocation(data.coordinates);
  });
 socket.on('disconnect', function(){ console.log("disconnect"); });
@@ -12,6 +11,7 @@ socket.on('disconnect', function(){ console.log("disconnect"); });
 var geotrack = {
     
     polylines:[],
+    locations:[],
     newlocation: function(coords){
         var lat = coords[1]; 
         var lon = coords[0];
@@ -19,10 +19,10 @@ var geotrack = {
         if(marker){
             marker.setMap(null);
         }
-        locations.push({lat:lat,
+        geotrack.locations.push({lat:lat,
                         lon:lon});
         geotrack.setPolylines();
-        new aLatlng = new google.maps.LatLng(lat, lon);
+        aLatlng = new google.maps.LatLng(lat, lon);
         marker = new google.maps.Marker({
             position: aLatlng, 
             map: map
@@ -52,19 +52,18 @@ var geotrack = {
         var panopoints = [];
         var loc = geotrack.locations[geotrack.locations.length-1];
         var lastpoint = new google.maps.LatLng(loc.lat, loc.lon);
-        for(var i =geotrack.locations.length-2; i> 0; i--){
+        for(var i =geotrack.locations.length-1; i> 0; i--){
             var loc = geotrack.locations[i];
-            if(img.geo !== undefined){
-                cur_point = new google.maps.LatLng(loc.lat, loc.lon);
+            cur_point = new google.maps.LatLng(loc.lat, loc.lon);
+            
+            start_g-=3;
+            start_b-=3;
+            polyoptions.strokeColor = "#00"+start_g.toString(16)+start_b.toString(16);
 
-                start_g-=3;
-                start_b-=3;
-                polyoptions.strokeColor = "#00"+start_g.toString(16)+start_b.toString(16);
-
-                polyoptions.path = [lastpoint, cur_point];
-                geotrack.polyLines.push(new google.maps.Polyline(polyoptions));
-                lastpoint = cur_point;
-            }
+            polyoptions.path = [lastpoint, cur_point];
+            geotrack.polyLines.push(new google.maps.Polyline(polyoptions));
+            lastpoint = cur_point;
+            
         }
     }
 

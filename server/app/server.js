@@ -52,7 +52,8 @@ app.put('/api/location', function(req, res){
         }
     });
     for( s in subs){
-        subs[s].emit('newlocation', newlocation.geom);
+        console.log("send to client");
+        subs[s].send(newlocation.geom);
     }    
 
 });
