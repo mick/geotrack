@@ -1,0 +1,13 @@
+
+
+This is a simple project to show the power of CouchDB and Node.js for handling Geo Data.
+
+
+Posts to a simple http api are recorded and displayed on a map.  New updates are sent to all
+subscribe web clients to be updated in real-time
+
+==== REQUIRES
+
+ - expressjs
+ - cradle
+ - CouchDB (or hosting with iris couch) Needs to include geocouch.
