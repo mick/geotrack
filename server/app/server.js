@@ -32,17 +32,19 @@ socket.on('connection', function(client){
                                return;
                            }
                            startdate = new Date();
+                           startdate.setTime(startdate.getTime() - (1000*60*30));
+                           var retPoints = [];
                            for(d in docs){
-                               startdate.setTime(startdate.getTime() - (1000*60*60));
                                messagedate = new Date(docs[d].value.date);
-                               if(messagedate < startdate){
-                                   delete docs[d];
+                               if(messagedate > startdate){
+                                   retPoints.push(docs[d]);
                                }
                                
                            }
 
                            console.log("docs", docs);
-                           client.send({type:"initial", data:docs});
+                           console.log("docs", docs);
+                           client.send({type:"initial", data:retPoints});
                        });
         }
         
