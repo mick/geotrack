@@ -28,6 +28,7 @@ var geotrack = {
             map: map
         });
         map.setCenter(aLatlng);
+        map.setZoom(13);
 
     },
     setPolylines:function(){
@@ -73,7 +74,7 @@ $(document).ready(function(){
         
     var myLatlng = new google.maps.LatLng(40.017146, -105.28312);
     var myOptions = {
-        zoom: 11,
+        zoom: 8,
         center: myLatlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
