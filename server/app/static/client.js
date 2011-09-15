@@ -28,7 +28,7 @@ var geotrack = {
             map: map
         });
         map.setCenter(aLatlng);
-        map.setZoom(15);
+        map.setZoom(18);
 
     },
     setPolylines:function(){
