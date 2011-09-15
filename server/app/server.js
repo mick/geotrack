@@ -24,7 +24,7 @@ socket.on('connection', function(client){
         console.log("get initial: ", msg);
         if(msg.type == "fetchinitial"){
             bbox = msg.bbox.join(",");
-            db.spatial("gc-utils/geomsFull",
+            db.spatial("gc-utils/recentFull",
                        {"bbox":bbox, "descending": "true"},
                        function(er, docs) {
                            if(er){
