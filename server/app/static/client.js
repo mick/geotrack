@@ -7,8 +7,20 @@ var geotrack = {
     polylines:[],
     locations:[],
     initiallocation: function(data){
+        compare = function(a, b)
+        {
+            var adate = new Date(a.value.date);
+            var bdate = new Date(b.value.date);
+            if (adate < bdate)
+                return -1;
+            if (adate > bdate)
+                return 1;
+            return 0;
+        }
+
+        data = data.sort(compare);
+
         for(d in data){
-            console.log("data: ", data[d]);
             geotrack.newlocation(data[d].value.geometry.coordinates);
         }
     },
