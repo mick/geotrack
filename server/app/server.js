@@ -27,6 +27,13 @@ socket.on('connection', function(client){
 }); 
 
 app.get('/', function(req, res){                
+    db.spatial("geocats/points",
+{"bbox":bbox, "descending": "true"},
+});
+function(er, docs) {
+if(er){sys.puts("Error: "+sys.inspect(er));
+res.send("error");return;} res.send(docs);
+});
         res.render('index.ejs', { layout: false});
     });
 app.use('/static', express.static(__dirname + '/static')); 
@@ -37,11 +44,9 @@ app.put('/api/location', function(req, res){
     var lat = req.param("lat");
     var lng = req.param("lng");
 
-    //var lat = req.body['lat'];
-    //var lng = req.body['lng'];
     console.log("new location posted");
     var newlocation = {date:(new Date()),
-                       geom: {"type":"Point", "coordinates":[lng, lat]}};
+                       geometry: {"type":"Point", "coordinates":[lng, lat]}};
 
     db.save(newlocation, function (err, rs) {
         if(err){
@@ -52,8 +57,7 @@ app.put('/api/location', function(req, res){
         }
     });
     for( s in subs){
-        console.log("send to client");
-        subs[s].send(newlocation.geom);
+        subs[s].send(newlocation.geometry);
     }    
 
 });
