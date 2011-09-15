@@ -42,8 +42,6 @@ socket.on('connection', function(client){
                                
                            }
 
-                           console.log("docs", docs);
-                           console.log("docs", docs);
                            client.send({type:"initial", data:retPoints});
                        });
         }
