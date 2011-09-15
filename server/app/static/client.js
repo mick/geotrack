@@ -71,9 +71,9 @@ var geotrack = {
 
 $(document).ready(function(){
         
-    var myLatlng = new google.maps.LatLng(40.397, -104.644);
+    var myLatlng = new google.maps.LatLng(40.017146, -105.28312);
     var myOptions = {
-        zoom: 8,
+        zoom: 11,
         center: myLatlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
