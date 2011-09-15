@@ -1,17 +1,17 @@
 var socket = new io.Socket();
 var map = null;
 var marker = null;
-socket.connect();
-socket.on('connect', function(){ console.log("connect"); });
-socket.on('message', function(data){ 
-    geotrack.newlocation(data.coordinates);
- });
-socket.on('disconnect', function(){ console.log("disconnect"); });
 
 var geotrack = {
     
     polylines:[],
     locations:[],
+    initiallocation: function(data){
+        for(d in data){
+            console.log("data: ", data[d]);
+            geotrack.newlocation(data[d].value.geometry.coordinates);
+        }
+    },
     newlocation: function(coords){
         var lat = coords[1]; 
         var lon = coords[0];
@@ -71,13 +71,39 @@ var geotrack = {
 
 $(document).ready(function(){
         
-        var myLatlng = new google.maps.LatLng(40.397, -104.644);
-        var myOptions = {
-            zoom: 8,
-            center: myLatlng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(jQuery("#map")[0], myOptions);
+    var myLatlng = new google.maps.LatLng(40.397, -104.644);
+    var myOptions = {
+        zoom: 8,
+        center: myLatlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(jQuery("#map")[0], myOptions);
+
+    socket.connect();
+
+    socket.on('connect', function(){ 
+        google.maps.event.addListener(map, 'bounds_changed', function(){
+            if(!geotrack.initaldata){
+                var mapbounds = map.getBounds();
+                bounds = [mapbounds.getSouthWest().lng(),
+                           mapbounds.getSouthWest().lat(),
+                          mapbounds.getNorthEast().lng(),
+                           mapbounds.getNorthEast().lat()];
+                socket.send({type:"fetchinitial", bbox:bounds});
+                geotrack.initaldata = true;
+            }
+        });
 
     });
+    socket.on('message', function(data){ 
+        if(data.type == "initial"){
+            geotrack.initiallocation(data.data);
+        }else{
+            geotrack.newlocation(data.coordinates);
+        }
+    });
+    socket.on('disconnect', function(){ console.log("disconnect"); });
+
+
+});
 

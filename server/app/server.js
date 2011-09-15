@@ -21,28 +21,37 @@ socket.on('connection', function(client){
     subs.push(client);
     client.on('message', function(msg){ 
         // no client messages yet.
-
+        console.log("get initial: ", msg);
+        if(msg.type == "fetchinitial"){
+            bbox = msg.bbox.join(",");
+            db.spatial("gc-utils/geomsFull",
+                       {"bbox":bbox, "descending": "true"},
+                       function(er, docs) {
+                           if(er){
+                               sys.puts("Error: "+sys.inspect(er));
+                               return;
+                           }
+                           console.log("docs", docs);
+                           client.send({type:"initial", data:docs});
+                       });
+        }
+        
     }); 
+
     client.on('disconnect', function(){ sys.puts("client disconnect"); }) ;
 }); 
 
 app.get('/', function(req, res){                
-    db.spatial("geocats/points",
-{"bbox":bbox, "descending": "true"},
+    res.render('index.ejs', { layout: false});
 });
-function(er, docs) {
-if(er){sys.puts("Error: "+sys.inspect(er));
-res.send("error");return;} res.send(docs);
-});
-        res.render('index.ejs', { layout: false});
-    });
+
 app.use('/static', express.static(__dirname + '/static')); 
 
 
 
 app.put('/api/location', function(req, res){                
-    var lat = req.param("lat");
-    var lng = req.param("lng");
+    var lat = parseFloat(req.param("lat"));
+    var lng = parseFloat(req.param("lng"));
 
     console.log("new location posted");
     var newlocation = {date:(new Date()),
