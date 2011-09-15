@@ -24,13 +24,23 @@ socket.on('connection', function(client){
         console.log("get initial: ", msg);
         if(msg.type == "fetchinitial"){
             bbox = msg.bbox.join(",");
-            db.spatial("gc-utils/recentFull",
+            db.spatial("gc-utils/geomFull",
                        {"bbox":bbox, "descending": "true"},
                        function(er, docs) {
                            if(er){
                                sys.puts("Error: "+sys.inspect(er));
                                return;
                            }
+                           startdate = new Date();
+                           for(d in docs){
+                               startdate.setTime(startdate.getTime() - (1000*60*60));
+                               messagedate = new Date(docs[d].value.date);
+                               if(messagedate < startdate){
+                                   delete docs[d];
+                               }
+                               
+                           }
+
                            console.log("docs", docs);
                            client.send({type:"initial", data:docs});
                        });
